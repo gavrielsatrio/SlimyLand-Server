@@ -71,13 +71,13 @@ webSocketServer.on("connection", webSocket =>
                 }
             );
         }
-        else if(jsonObject.type == "newPlayer")
+        else if(jsonObject.type == "newPlayerJoined")
         {
             const player = playerList[playerList.findIndex(player => player.playerID == jsonObject.value.playerID)];
 
             broadcastMessage(JSON.stringify(
                 {
-                    type : "newPlayer",
+                    type : "newPlayerJoined",
                     value : 
                     {
                         playerID : player.playerID,
