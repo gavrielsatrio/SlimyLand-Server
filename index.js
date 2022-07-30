@@ -1,5 +1,7 @@
 // npm i ws
 
+console.log("Server started !");
+
 const WebSocket = require("ws");
 
 const webSocketServer = new WebSocket.Server(
@@ -98,26 +100,32 @@ webSocketServer.on("connection", webSocket =>
 
             broadcastMessage(message);
         }
+        else if(jsonObject.type == "playerRemoved")
+        {
+            broadcastMessage(JSON.stringify(
+                {
+                    type : "playerRemoved",
+                    value : 
+                    {
+                        playerID : jsonObject.value.playerID
+                    }
+                }
+            ));
+
+            const playerIndex = playerList.findIndex(player => player.playerID == jsonObject.value.playerID);
+            playerList.splice(playerIndex, 1);
+        }
         else if(jsonObject.type == "playerChat")
         {
             broadcastMessage(message);
         }
-        else if(jsonObject.type == "playerRemoved")
+        else if(jsonObject.type == "requestLoadMap")
         {
-            const playerIndex = playerList.findIndex(player => player.playerID == jsonObject.value.playerID);
-            playerList.splice(playerIndex, 1);
-
-            broadcastMessage(JSON.stringify(
-                {
-                    type : "clearMap"
-                }
-            ));
-            
             playerList.forEach((player) =>
             {
-                broadcastMessage(JSON.stringify(
+                webSocket.send(JSON.stringify(
                     {
-                        type : "mapUpdates",
+                        type : "loadMap",
                         value : 
                         {
                             playerID : player.playerID,
